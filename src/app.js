@@ -8,7 +8,7 @@ var session = require('express-session');
 var Sequelize = require('sequelize');
 
 
-var sequelize = new Sequelize('kevin_database', 'kevin', null, {
+var sequelize = new Sequelize('kevin_database', process.env.POSTGRES_USER, null, {
 	host: 'localhost',
 	dialect: 'postgres',
 	define: {
