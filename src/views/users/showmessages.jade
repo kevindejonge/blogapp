@@ -1,0 +1,45 @@
+include mixins
+html
+	head
+		title App Login & shizzle
+		meta( charset='utf-8' )
+		meta( http-equiv='X-UA-Compatible', content='IE=edge' )
+		
+		link(href="//maxcdn.bootstrapcdn.com/bootswatch/3.3.0/flatly/bootstrap.min.css", rel="stylesheet")
+		script(src='http://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js')
+	body
+			.container
+			+nav("ThizApp", "dropdown_menu", "inverse")
+				+nav_item("/") home
+				+nav_item("/users/messages") write message
+				+nav_item("/users/showmessages", "active") show all messages
+				+nav_item("/logout") log out
+
+each post in allPosts
+	.row
+		.col-md-4
+		.col-sm-6
+		.col-xs-12
+			+panel("Messages")
+				a(href="/singlepost/"+ post.id)= post.title + " - " + post.author
+.row
+	br
+	br
+	br
+	.col-xs-12
+		+panel("Footer", "success")
+			p This is the footer of this website made by Kevin de Jonge
+	//- each post in allPosts 
+	//- 	ul 
+	//- 		li title: #{post.title} 
+	//- 		li body: #{post.body}
+	//- 		li Author: #{post.author}
+	//- 			ul
+	//- 				each comment in allComments
+	//- 					li Comment: #{comment.body} By:#{comment.author}
+							ul 
+								form(id ="commenttable" action='./comments' method='post')
+			
+								input(placeholder ="Comment" name='commentz' style = "width: 300px;")
+								br
+								input(type='submit' value='Send')

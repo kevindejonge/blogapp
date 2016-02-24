@@ -1,0 +1,22 @@
+{
+  "name": "app",
+  "version": "1.0.0",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.14.2",
+    "bootstrap": "^3.3.6",
+    "express": "^4.13.4",
+    "express-session": "^1.13.0",
+    "fs": "0.0.2",
+    "nodemon": "^1.8.1",
+    "pg": "^4.4.4",
+    "sequelize": "^3.19.3"
+  },
+  "devDependencies": {},
+  "description": ""
+}

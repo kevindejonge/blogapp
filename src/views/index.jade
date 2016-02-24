@@ -1,0 +1,43 @@
+include mixins
+html
+	head
+
+		title App Login & shizzle
+		meta( charset='utf-8' )
+		meta( http-equiv='X-UA-Compatible', content='IE=edge' )
+		
+		link(href="//maxcdn.bootstrapcdn.com/bootswatch/3.3.0/flatly/bootstrap.min.css", rel="stylesheet")
+	
+
+	body(style="padding-bottom:10rem;")
+		.container
+ 
+		script( src='//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js' )
+		script( src='//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js' )
+		+nav("ThizApp", "dropdown_menu", "inverse")
+			if username
+				p logged in as #{username.username}
+				+nav_item("/", "active") home
+				+nav_item( "users/"+ username.id ) view profile 
+				+nav_item("users/messages") write message
+				+nav_item("users/showmessages") show all messages
+				+nav_item("/logout") log out
+			else
+.row
+		
+	.col-xs-6
+
+		+panel("New User")
+			form(action='/users/new' method='post')
+				input(placeholder = 'username' name='username')
+				input(placeholder = 'password' name='password' type = "password")
+				input(placeholder = 'email' name='email')
+				input(type='submit' value='create')
+	.col-xs-6
+		+panel("Login")
+			form(action='/login' method='post')
+				input(placeholder = "email" name='email')
+				input(placeholder = "password" name='password' type='password')
+				input(type='submit' value='login')
+
+			h2= message
