@@ -106,7 +106,6 @@ app.get('/users/showmessages', function(request, response) {
 			response.render('users/showmessages', {
 				allPosts: allPosts,
 				// allUsers: allUsers,
-				allComments: allComments,
 			});
 		});
 	});
@@ -173,7 +172,6 @@ app.get('/users/posts/:id', function(request, response) {
 	}));
 });
 
-// thijs deel
 app.get('/singlepost/:postid', function(request, response) {
     if (request.session.username != undefined) {
         postID = request.params.postid;
