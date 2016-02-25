@@ -38,6 +38,7 @@ var comment = sequelize.define('comment', {
 
 gebruiker.hasMany(Post);
 Post.belongsTo(gebruiker);
+comment.belongsTo(Post);
 Post.hasMany(comment);
 comment.belongsTo(gebruiker);
 gebruiker.hasMany(comment);
