@@ -16,7 +16,17 @@ html
 		script( src='//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js' )
 		+nav("ThizApp", "dropdown_menu", "inverse")
 			if username
-				p logged in as #{username.username}
+				p.log logged in as #[a.link(href= "users/"+ username.id) #{username.username}]
+				style. 
+					.log{
+					position: absolute;
+					right: 10px;
+					color: white;
+					}
+					.link
+					{
+					color: white;
+					}
 				+nav_item("/", "active") home
 				+nav_item( "users/"+ username.id ) view profile 
 				+nav_item("users/messages") write message
