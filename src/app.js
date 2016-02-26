@@ -166,7 +166,7 @@ app.get('/users/posts/:id', function(request, response) {
 	})).then(function() {
 		response.render('users/showmessages', {
 			allPosts: allPosts,
-			allComments: allComments,
+			// allComments: allComments,
 			ID: ID
 		});
 		console.log(allPosts);
@@ -238,7 +238,7 @@ app.post('/login', bodyParser.urlencoded({
 		if (username !== null && request.body.password === username.password) {
 			// console.log(username);
 			request.session.username = username;
-			response.redirect('users/' + username.id);
+			response.redirect('/');
 		} else {
 			console.log("wtf gek")
 			response.redirect('/?message=' + encodeURIComponent("Invalid email or password."));

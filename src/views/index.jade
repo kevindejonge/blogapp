@@ -1,7 +1,7 @@
 include mixins
 html
 	head
-
+		
 		title App Login & shizzle
 		meta( charset='utf-8' )
 		meta( http-equiv='X-UA-Compatible', content='IE=edge' )
@@ -22,7 +22,38 @@ html
 				+nav_item("users/messages") write message
 				+nav_item("users/showmessages") show all messages
 				+nav_item("/logout") log out
-
+	if username
+			p.welkomsttekst Welcome #{username.username}
+			p.welkomst write some messages to fill the blog - G
+			p.gruwel and comment on other messages
+			style. 
+				.welkomsttekst
+				{
+				font-size: 75;
+				color: #848484;
+				margin-left: 100px;
+				margin-top: 25px;
+				font-family: Helvetica;
+				text-transform: uppercase;
+				}
+				.welkomst
+				{
+				font-size: 35px;
+				color: #BDBDBD;
+				margin-left: 100px;
+				margin-top: 5px;
+				font-family: Helvetica;
+				text-transform: uppercase;
+				}
+				.gruwel
+				{
+				font-size: 25px;
+				color:#D8D8D8;
+				margin-left: 100px;
+				margin-top: 5px;
+				font-family: Helvetica;
+				text-transform: uppercase;
+				}
 if !username
 	.row
 			
@@ -41,4 +72,15 @@ if !username
 					input(placeholder = "password" name='password' type='password')
 					input(type='submit' value='login')
 
-				h2= message
+.row
+	br
+	br
+	br
+	br
+	br
+	br
+	br
+	br
+	.col-xs-12
+		+panel("Footer", "success")
+			p This is the footer of this website made by Kevin de Jonge
