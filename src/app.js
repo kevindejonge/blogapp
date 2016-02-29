@@ -270,7 +270,7 @@ app.post('/users/new', bodyParser.urlencoded({
 		email: emailed
 	})
 	console.log("User Created in Database");
-	response.redirect('/users/profile')
+	response.redirect('/?message=' + encodeURIComponent("User created! Log in to view your profile."))
 });
 
 // comments toevoegen 

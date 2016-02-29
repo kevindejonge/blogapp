@@ -75,12 +75,14 @@ if !username
 					input(placeholder = 'password' name='password' type = "password")
 					input(placeholder = 'email' name='email')
 					input(type='submit' value='create')
+					
 		.col-xs-6
 			+panel("Login")
 				form(action='/login' method='post')
 					input(placeholder = "email" name='email')
 					input(placeholder = "password" name='password' type='password')
 					input(type='submit' value='login')
+					br
 					br
 					h8= message
 
