@@ -10,7 +10,17 @@ html
 	body
 		.container
 		+nav("ThizApp", "dropdown_menu", "inverse")
-			p loggin in as #{username.username}
+			p.log logged in as #[a.link(href= "users/"+ username.id) #{username.username}]
+				style. 
+					.log{
+					position: absolute;
+					right: 10px;
+					color: white;
+					}
+					.link
+					{
+					color: white;
+					}
 			+nav_item("/") home
 			+nav_item("/users/messages") write message
 			+nav_item("/users/showmessages", "active") show all messages
