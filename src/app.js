@@ -6,6 +6,8 @@ var app = express();
 var bodyParser = require('body-parser');
 var session = require('express-session');
 var Sequelize = require('sequelize');
+var bcrypt = require('bcrypt');
+
 
 
 var sequelize = new Sequelize('kevin_database', process.env.POSTGRES_USER, null, {
@@ -20,7 +22,18 @@ var gebruiker = sequelize.define('appusers', {
 	username: Sequelize.STRING,
 	email: Sequelize.STRING,
 	password: Sequelize.STRING
+}, {
+	freezeTableName: true,
+	instanceMethods: {
+		generateHash: function(password) {
+			return bcrypt.hashSync(password, bcrypt.genSaltSync(8), null);
+		},
+		validPassword: function(password) {
+			return bcrypt.compareSync(password, this.password);
+		},
+	}
 });
+
 
 var Post = sequelize.define('appmessages', {
 	title: Sequelize.TEXT,
@@ -88,28 +101,28 @@ app.get('/users/showmessages', function(request, response) {
 		})
 		allPosts = data;
 	}).then(gebruiker.findAll().then(function(gebruikers) {
-			var data = gebruikers.map(function(appusers) {
-				return {
-					username: appusers.dataValues.username,
-					email: appusers.dataValues.email
-				}
-			})
-			allUsers = data;
-		})).then(comment.findAll().then(function(comments) {
-			var data = comments.map(function(comment) {
-				return {
-					body: comment.dataValues.body,
-					author: comment.dataValues.author
-				}
-			})
-			allComments = data;
-		})).then(function() {
-			response.render('users/showmessages', {
-				allPosts: allPosts,
-				// allUsers: allUsers,
-			});
+		var data = gebruikers.map(function(appusers) {
+			return {
+				username: appusers.dataValues.username,
+				email: appusers.dataValues.email
+			}
+		})
+		allUsers = data;
+	})).then(comment.findAll().then(function(comments) {
+		var data = comments.map(function(comment) {
+			return {
+				body: comment.dataValues.body,
+				author: comment.dataValues.author
+			}
+		})
+		allComments = data;
+	})).then(function() {
+		response.render('users/showmessages', {
+			allPosts: allPosts,
+			// allUsers: allUsers,
 		});
 	});
+});
 // Toevoegen dat de gebruikers berichten bekeken kunnen worden. 
 
 app.get('/users/:id', function(request, response) {
@@ -174,55 +187,55 @@ app.get('/users/posts/:id', function(request, response) {
 });
 
 app.get('/singlepost/:postid', function(request, response) {
-    if (request.session.username != undefined) {
-        postID = request.params.postid;
-        Post.findById(postID)
-            .then(function(post) {
-                gebruiker.findAll().then(function(gebruikers) {
-                    var data = gebruikers.map(function(appusers) {
-                        return {
-                            username: appusers.dataValues.username,
-                            email: appusers.dataValues.email,
-                            id: appusers.dataValues.username.id
-                        }
-                    })
-                    allUsers = data;
-                })
-                    .then(function() {
-                        for (user in allUsers) {
-                            if (allUsers[user].id === post.appusers_id) {
-                                post.author = allUsers[user].username;
-                            }
-                        }
-                    })
-                    .then(comment.findAll({
-                            where: {
-                                post_id: postID
-                            }
-                        })
-                        .then(function(comments) {
-                            var data = comments.map(function(comment) {
-                                return {
-                                    body: comment.dataValues.body,
-                                    author: comment.dataValues.author
-                                }
-                            });
-                            allComments = data.reverse();
-                        })
-                        .then(function() {
-                            response.render('users/singlepost', {
-                                postID: postID,
-                                post: post,
-                                allComments: allComments,
-                                username: request.session.username,
-                                ID: request.session.username.id
-                            });
-                            console.log(allComments);
-                        }));
-            })
-    } else {
-        response.redirect('/');
-    }
+	if (request.session.username != undefined) {
+		postID = request.params.postid;
+		Post.findById(postID)
+			.then(function(post) {
+				gebruiker.findAll().then(function(gebruikers) {
+						var data = gebruikers.map(function(appusers) {
+							return {
+								username: appusers.dataValues.username,
+								email: appusers.dataValues.email,
+								id: appusers.dataValues.username.id
+							}
+						})
+						allUsers = data;
+					})
+					.then(function() {
+						for (user in allUsers) {
+							if (allUsers[user].id === post.appusers_id) {
+								post.author = allUsers[user].username;
+							}
+						}
+					})
+					.then(comment.findAll({
+							where: {
+								post_id: postID
+							}
+						})
+						.then(function(comments) {
+							var data = comments.map(function(comment) {
+								return {
+									body: comment.dataValues.body,
+									author: comment.dataValues.author
+								}
+							});
+							allComments = data.reverse();
+						})
+						.then(function() {
+							response.render('users/singlepost', {
+								postID: postID,
+								post: post,
+								allComments: allComments,
+								username: request.session.username,
+								ID: request.session.username.id
+							});
+							console.log(allComments);
+						}));
+			})
+	} else {
+		response.redirect('/');
+	}
 });
 
 
@@ -235,14 +248,23 @@ app.post('/login', bodyParser.urlencoded({
 			email: request.body.email
 		}
 	}).then(function(username) {
-		if (username !== null && request.body.password === username.password) {
-			// console.log(username);
-			request.session.username = username;
-			response.redirect('/');
-		} else {
-			console.log("wtf gek")
-			response.redirect('/?message=' + encodeURIComponent("Invalid email or password."));
-		}
+		var hashpassword = request.body.password;
+		bcrypt.compare(hashpassword, username.password.toString(), function(err, result) {
+			if (err !== undefined) {
+				console.log(err);
+			} else {
+				console.log(result)
+				if (username !== null && result === true) {
+					request.session.username = username;
+					response.redirect('/');
+				} else {
+					console.log("gaat iets fout")
+					response.redirect('/?message=' + encodeURIComponent("Invalid email or password."));
+				}
+			};
+		});
+
+
 	});
 });
 
@@ -262,17 +284,25 @@ app.post('/users/new', bodyParser.urlencoded({
 	extended: true
 }), function(request, response) {
 	var usernamed = request.body.username;
-	var passworded = request.body.password;
 	var emailed = request.body.email;
-	gebruiker.create({
-		username: usernamed,
-		password: passworded,
-		email: emailed
-	})
-	console.log("User Created in Database");
-	response.redirect('/?message=' + encodeURIComponent("User created! Log in to view your profile."))
-});
+	var passworded = request.body.password;
 
+	bcrypt.hash(passworded, 8, function(err, hash) {
+		if (err !== undefined) {
+			console.log(err);
+		} else {
+			console.log(hash);
+			gebruiker.create({
+				username: usernamed,
+				password: hash,
+				email: emailed
+			})
+			console.log("User Created in Database");
+			response.redirect('/?message=' + encodeURIComponent("User created! Log in to view your profile."))
+		}
+
+	});
+});
 // comments toevoegen 
 
 app.post('/users/messages', bodyParser.urlencoded({
